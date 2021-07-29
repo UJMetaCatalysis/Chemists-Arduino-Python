@@ -65,3 +65,6 @@ This can be caused by a few things:
 For 1 and 2, double check the .json file corresponding to your python script. Is the serial port named correctly under "port": "COMX" (windows) or "port": "dev/tty/etc"? Is the device name and command_id correct? The command_id should correspond **exactly** to the id you used in your Arduino sketch e.g., (cmdObj.registerToCommandManager(cmdMng, **"THIS"**)
 
 For 3, make sure no other programs or scripts are currently using the serial port. Unplugging the USB and re-inserting it can help.
+
+
+These libraries were authored by the Cronin Group at the University of Glasgow. You can find their repositories under the username "croningp" 

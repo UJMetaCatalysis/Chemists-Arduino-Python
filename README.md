@@ -12,8 +12,8 @@ Arduino side: "Arduino-CommandTools" and "CommandHandler".
 Once this is all set up, we can write Arduino sketches (another name for Arduino programs) that allow the Arduino to understand the Python scripts.
 
 ## Installation
-Instructions for installing the software can be found each corresponding folder here on the repository. Just click on the folder and scroll down to the readme section.
-Before installing the software, it is recommended that you install Python and the Arduino IDE (integrated development environment)
+Instructions for installing the software can be found on each corresponding folder here on the repository. Just click on the folder and scroll down to the readme section.
+Before installing the software, it is recommended that you install Python and the Arduino IDE (integrated development environment). To download this repository, click on the green "Code" button at the top right, then select "Download Zip".
 
 ### Installing Python
 Go to: https://www.python.org/downloads/ and download the installer for your operating system. 

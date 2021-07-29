@@ -4,7 +4,9 @@ This is a repository of the libraries required to install and use the Commanduin
 Commanduino allows a PC running Python scripts (another name for Python programs) to control an Arduino board using a USB cable. 
 
 For the Arduino to understand the instructions sent by the Python scripts, we need to set up software for both sides:
+
 Python side: "commanduino"
+
 Arduino side: "Arduino-CommandTools" and "CommandHandler". 
 
 Once this is all set up, we can write Arduino sketches (another name for Arduino programs) that allow the Arduino to understand the Python scripts.
@@ -23,18 +25,29 @@ Download the installer from: https://www.arduino.cc/en/software.
 ## Using the command prompt/terminal
 For Windows users, you access the command prompt by searching for "Command Prompt" and opening the corresponding app. To enter a command, type it into the window and press
 enter. Here are some basic commands to get you started:
+
+
 *cd*                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
+
 *cd ..*                   - change directory to the parent directory. Useful for going back.
+
 *dir*                     - displays the content of the current directory.
+
 *python script_name.py*   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
+
 
 For Mac or Linux users, you access the terminal by searching for it and opening the corresponding app. To enter a command, type it into the window and press
 enter. Here are some basic commands to get you started:
 
+
 *cd*                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
+
 *cd ..*                   - change directory to the parent directory. Useful for going back.
+
 *ls*                      - displays the content of the current directory.
+
 *python script_name.py*   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
+
 
 In the readme's of the software, you may see blocks like this:
 ```shell

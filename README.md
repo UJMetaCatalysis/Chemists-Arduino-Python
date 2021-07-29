@@ -23,30 +23,30 @@ Run the installer. At the bottom of the window, tick "Add Python X.X to PATH". T
 Download the installer from: https://www.arduino.cc/en/software.
 
 ## Using the command prompt/terminal
-For Windows users, you access the command prompt by searching for "Command Prompt" and opening the corresponding app. To enter a command, type it into the window and press
+For *Windows* users, you access the *Command Prompt* by searching for "Command Prompt" and opening the corresponding app. To enter a command, type it into the window and press
 enter. Here are some basic commands to get you started:
 
 
-*cd*                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
+**cd**                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
 
-*cd ..*                   - change directory to the parent directory. Useful for going back.
+**cd ..**                   - change directory to the parent directory. Useful for going back.
 
-*dir*                     - displays the content of the current directory.
+**dir**                     - displays the content of the current directory.
 
-*python script_name.py*   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
+**python script_name.py**   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
 
 
 For Mac or Linux users, you access the terminal by searching for it and opening the corresponding app. To enter a command, type it into the window and press
 enter. Here are some basic commands to get you started:
 
 
-*cd*                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
+**cd**                      - change directory. Type cd followed by the directory name to move to that directory. Pressing Tab while typing the directory name will autocomplete the name.
 
-*cd ..*                   - change directory to the parent directory. Useful for going back.
+**cd ..**                   - change directory to the parent directory. Useful for going back.
 
-*ls*                      - displays the content of the current directory.
+**ls**                      - displays the content of the current directory.
 
-*python script_name.py*   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
+**python script_name.py**   - runs script_name.py using python. You should be in the directory where the script is stored (use cd to get there)
 
 
 In the readme's of the software, you may see blocks like this:
@@ -54,4 +54,14 @@ In the readme's of the software, you may see blocks like this:
 This is a code block, generally it means you should type these commands
 into your command prompt/terminal
 ```
+## Common issues
+### Device "XXX" not found
+This can be caused by a few things:
+1. You haven't set the serial port correctly in the .json file
+2. You haven't set the name of the device correctly in the .json file
+3. The serial port is busy/being used/isn't connected.
 
+
+For 1 and 2, double check the .json file corresponding to your python script. Is the serial port named correctly under "port": "COMX" (windows) or "port": "dev/tty/etc"? Is the device name and command_id correct? The command_id should correspond **exactly** to the id you used in your Arduino sketch e.g., (cmdObj.registerToCommandManager(cmdMng, **"THIS"**)
+
+For 3, make sure no other programs or scripts are currently using the serial port. Unplugging the USB and re-inserting it can help.

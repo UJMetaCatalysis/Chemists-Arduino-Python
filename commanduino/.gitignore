@@ -1,0 +1,4 @@
+*.pyc
+commanduino.egg-info
+.vscode/*
+.idea/*

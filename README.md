@@ -3,7 +3,7 @@
 This is a repository of the libraries required to install and use the Commanduino system for controlling Arduino boards.
 Commanduino allows a PC running Python scripts (another name for Python programs) to control an Arduino board using a USB cable. 
 
-For the Arduino to understand the instructions sent by the Python scripts, we need to set up software for both sides:
+For the Arduino to understand the instructions sent by the Python scripts, we need to set up software for **both** the PC (running python) **AND** the Arduino (running C++):
 
 Python side: "commanduino"
 
@@ -12,8 +12,8 @@ Arduino side: "Arduino-CommandTools" and "CommandHandler".
 Once this is all set up, we can write Arduino sketches (another name for Arduino programs) that allow the Arduino to understand the Python scripts.
 
 ## Installation
-Instructions for installing the software can be found on each corresponding folder here on the repository. Just click on the folder and scroll down to the readme section.
-Before installing the software, it is recommended that you install Python and the Arduino IDE (integrated development environment). To download this repository, click on the green "Code" button at the top right, then select "Download Zip".
+Instructions for installing the software can be found on each corresponding folder here on GitHub. Just click on the folder and scroll down to the readme section.
+Before installing the software, it is recommended that you install Python and the Arduino IDE (integrated development environment). 
 
 ### Installing Python
 Go to: https://www.python.org/downloads/ and download the installer for your operating system. 
@@ -21,6 +21,12 @@ Run the installer. At the bottom of the window, tick "Add Python X.X to PATH". T
 
 ### Installing Arduino IDE
 Download the installer from: https://www.arduino.cc/en/software.
+
+## Installing commanduino
+Open the commanduino folder on github. There are instructions on installing the software when you scroll down on that page. Don't worry about using Git, just click on the big green "Code" button, then select "Download Zip". Make sure to move that directory to somewhere other than your downloads folder. Your user folder on the PC is a good option.
+
+## Installing Arduino-CommandTools and CommandHandler
+Open the corresponding folders and follow the instructions lower down on the pages. Click on the big green "Code" button, then select "Download Zip". Move the folders to your Arduino libraries folder as per the instructions on the github page. 
 
 ## Using the command prompt/terminal
 For *Windows* users, you access the *Command Prompt* by searching for "Command Prompt" and opening the corresponding app. To enter a command, type it into the window and press
@@ -54,6 +60,20 @@ In the readme's of the software, you may see blocks like this:
 This is a code block, generally it means you should type these commands
 into your command prompt/terminal
 ```
+
+## Running an example
+Once you have installed all the software, you should run an example. I would recommend "CommandAccelStepper", "CommandDigitalRead", or "CommandDigitalWrite". 
+
+1. Open the Arduino IDE
+2. Go to **File->Examples** and scroll down using the arrow at the bottom of the drop-down menu. Select the desired example.
+3. Make sure the Arduino is connected to the PC's USB port. 
+4. Go to **Tools->Port** and select the correct port. To find the port on Windows go to Device manager and look for Ports, the format is "COMX". On Mac or Linux, open a terminal window and enter the command `ls /dev/*usb*`.
+5. In the Arduino IDE, go to **Tools->Board** and make sure the board corresponds to the Arduino you are using.
+6. Verify, then upload the sketch using the buttons on the top of the window. 
+7. Now navigate using the file explorer to the folder where you installed the commanduino library. Open the examples folder, then "Commanddevices". Find the example that corresponds to the one you are using. 
+8. Edit the .json file in the example directory to use the correct port as found in step 4
+9. Open a terminal window, navigate to the folder you found in step 7 using cd, then run the example using the command `python examplename.py` where examplename is the name of the .py file you are running. 
+
 ## Common issues
 ### Device "XXX" not found
 This can be caused by a few things:

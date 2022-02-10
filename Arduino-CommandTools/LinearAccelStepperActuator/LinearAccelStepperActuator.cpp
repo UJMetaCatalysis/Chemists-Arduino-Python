@@ -4,30 +4,31 @@ LinearAccelStepperActuator::LinearAccelStepperActuator() {
 
 }
 
-LinearAccelStepperActuator::LinearAccelStepperActuator(AccelStepper &mystepper, int myHomeSwitchPin, int myEnablePin) {
+LinearAccelStepperActuator::LinearAccelStepperActuator(AccelStepper &mystepper, int myHomeSwitchPin, int myEnablePin, int* myEncoderCount) {
+  
+  encoderCount = myEncoderCount;
 
   homing = false;
   moving = false;
 
   stepper = &mystepper;
-  setSpeed(5000);
-  setMaxSpeed(5000);
+  
+  int speed = 5000;
+  setSpeed(speed);
+  setMaxSpeed(speed);
   setAcceleration(2000);
-  enableAcceleration();
+  disableAcceleration();
 
   homeSwitchPin = myHomeSwitchPin;
-  disableRevertedSwitch();
-
+  stepper->setEnablePin(myEnablePin);
   enablePin = myEnablePin;
+  enableRevertedSwitch();
+  stepper->setPinsInverted(false, false, true);
+  stepper->disableOutputs();
 }
 
 void LinearAccelStepperActuator::init() {
   pinMode(homeSwitchPin, INPUT);
-
-  if (enablePin > 0) {
-    pinMode(enablePin, OUTPUT);
-    digitalWrite(enablePin, LOW);
-  }
 }
 
 // you should set a speed first
@@ -35,29 +36,37 @@ void LinearAccelStepperActuator::init() {
 void LinearAccelStepperActuator::home() {
   homing = true;
   moving = true;
+  move(50000);
 }
 
 void LinearAccelStepperActuator::update() {
-  if (homing == true){
+  if (homing){
     if (homeSwitchState() == HIGH) {
       stop();
       setCurrentPosition(0);
     } else {
-      stepper->runSpeed();
+      stepper->runSpeedToPosition();
+      checkEncoder();
     }
   } else {
     if (accelerationEnabled == true) {
       stepper->run();
+      if (moving){
+        checkEncoder();
+      }
     } else {
       stepper->runSpeedToPosition();
+      if (moving)
+        checkEncoder(); 
     }
     if (distanceToGo() == 0) {
       moving = false;
+      stepper->disableOutputs();
     }
   }
 }
 
-boolean LinearAccelStepperActuator::homeSwitchState() {
+bool LinearAccelStepperActuator::homeSwitchState() {
   bool switchState = digitalRead(homeSwitchPin);
   if (revertSwitchEnabled) {
     switchState = !switchState;
@@ -65,11 +74,26 @@ boolean LinearAccelStepperActuator::homeSwitchState() {
   return switchState;
 }
 
-boolean LinearAccelStepperActuator::isMoving() {
+bool LinearAccelStepperActuator::isMoving() {
   return moving;
 }
 
+bool LinearAccelStepperActuator::checkEncoder(){
+  curPos = stepper->currentPosition();
+  if (abs(curPos - startPos)>(stepsPerRev/numGaps)){
+    startPos = curPos;
+    reqEncoderCount ++;
+    if (*encoderCount - reqEncoderCount < -3){
+        stop();
+    }
+  }
+}
+
 void LinearAccelStepperActuator::move(long relativeSteps) {
+  *encoderCount = 0;
+  reqEncoderCount = 0;
+  startPos = stepper->currentPosition();
+  stepper->enableOutputs();
   stepper->move(relativeSteps);
   moving = true;
   // we must set the speed here, because by default accel stepper compute speed from acceleration, here we force it to go to speed, so we have to set back the speed after a move
@@ -79,6 +103,10 @@ void LinearAccelStepperActuator::move(long relativeSteps) {
 }
 
 void LinearAccelStepperActuator::moveTo(long absoluteSteps) {
+  *encoderCount = 0;
+  reqEncoderCount = 0;
+  startPos = stepper->currentPosition();
+  stepper->enableOutputs();
   stepper->moveTo(absoluteSteps);
   moving = true;
   // we must set the speed here, because by default accel stepper compute speed from acceleration, here we force it to go to speed, so we have to set back the speed after a moveTo
@@ -126,6 +154,7 @@ void LinearAccelStepperActuator::setMaxSpeed(float stepsPerSecond) {
 
 void LinearAccelStepperActuator::setAcceleration(float stepsPerSecondPerSecond) {
   stepper->setAcceleration(stepsPerSecondPerSecond);
+  lastSetAcceleration = stepsPerSecondPerSecond;
 }
 
 float LinearAccelStepperActuator::speed(){

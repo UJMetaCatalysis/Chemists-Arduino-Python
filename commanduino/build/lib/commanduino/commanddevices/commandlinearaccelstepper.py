@@ -46,7 +46,6 @@ COMMANDLINEARACCELSTEPPER_REQUEST_MAXSPEED = "RIMS"
 COMMANDLINEARACCELSTEPPER_REQUEST_ACCELERATION = "RIA"
 
 # Outgoing Commands
-COMMANDLINEARACCELSTEPPER_MOVE_COMPLETE = "MC"
 COMMANDLINEARACCELSTEPPER_SWITCH = "S"
 COMMANDLINEARACCELSTEPPER_MOVING = "M"
 COMMANDLINEARACCELSTEPPER_DIST = "D"
@@ -67,7 +66,7 @@ DEFAULT_MAX_SPEED = 5000
 DEFAULT_ACCELERATION = 2000
 
 # Default homing speed
-DEFAULT_HOMING_SPEED = 1600
+DEFAULT_HOMING_SPEED = 2000
 
 # Default sleep time
 DEFAULT_SLEEP_TIME = 0.1  # let's not make it too low to not make the communication bus too busy
@@ -95,10 +94,10 @@ class CommandLinearAccelStepper(CommandDevice):
     Base:
         CommandDevice
     """
-    def __init__(self, speed=DEFAULT_SPEED, max_speed=DEFAULT_MAX_SPEED, acceleration=DEFAULT_ACCELERATION, homing_speed=DEFAULT_HOMING_SPEED, enabled_acceleration=True, reverted_direction=False, reverted_switch=True, steps_per_rev=3200):
+    def __init__(self, speed=DEFAULT_SPEED, max_speed=DEFAULT_MAX_SPEED, acceleration=DEFAULT_ACCELERATION, homing_speed=DEFAULT_HOMING_SPEED, enabled_acceleration=True, reverted_direction=False, reverted_switch=False):
         CommandDevice.__init__(self)
         self.register_all_requests()
-        self.register_all_callbacks()
+
         self.init_speed = speed
         self.init_max_speed = max_speed
         self.init_acceleration = acceleration
@@ -106,7 +105,6 @@ class CommandLinearAccelStepper(CommandDevice):
         self.enabled_acceleration = enabled_acceleration
         self.reverted_direction = reverted_direction
         self.reverted_switch = reverted_switch
-        self.steps_per_rev = 3200
 
     def init(self):
         self.set_all_params()
@@ -143,16 +141,6 @@ class CommandLinearAccelStepper(CommandDevice):
         if self.reverted_direction:
             value = -value
         return value
-
-    def revert_direction(self, direction):
-        """
-        Reverses the direction of the motor's rotation
-        :param direction: Boolean, True - clockwise, false = anti-clockwise
-        """
-        if direction:
-            self.reverted_direction = True
-        else:
-            self.reverted_direction = False
 
     @property
     def is_moving(self):
@@ -274,8 +262,7 @@ class CommandLinearAccelStepper(CommandDevice):
 
         """
         homing_speed = self.apply_reverted_direction(self.homing_speed)
-        self._set_speed(homing_speed)
-        time.sleep(0.1)
+        self._set_speed(-homing_speed)
         self.send(COMMANDLINEARACCELSTEPPER_HOME)
         if wait:
             self.wait_until_idle()
@@ -294,7 +281,6 @@ class CommandLinearAccelStepper(CommandDevice):
         running_speed = self.apply_reverted_direction(self.running_speed)
         self._set_speed(running_speed)
         steps = self.apply_reverted_direction(steps)
-        self.set_move_complete(False)
         self.send(COMMANDLINEARACCELSTEPPER_MOVE_TO, steps)
         if wait:
             self.wait_until_idle()
@@ -313,7 +299,6 @@ class CommandLinearAccelStepper(CommandDevice):
         running_speed = self.apply_reverted_direction(self.running_speed)
         self._set_speed(running_speed)
         steps = self.apply_reverted_direction(steps)
-        self.set_move_complete(False)
         self.send(COMMANDLINEARACCELSTEPPER_MOVE, steps)
         if wait:
             self.wait_until_idle()
@@ -469,21 +454,6 @@ class CommandLinearAccelStepper(CommandDevice):
         if arg[0]:
             self.acceleration = float(arg[0])
             self.acceleration_lock.ensure_released()
-
-    def register_all_callbacks(self):
-        self.register_clb(
-            COMMANDLINEARACCELSTEPPER_MOVE_COMPLETE,
-            "move_complete",
-            self.handle_move_complete,
-            False)
-        setattr(self, "encoder_error", False)
-
-    def handle_move_complete(self, *arg):
-        self.move_complete_lock.acquire()
-        self.move_complete = True
-        if int(arg[0]) - int(arg[1]) < -3:
-            self.encoder_error = True
-        self.move_complete_lock.ensure_released()
 
     def __str__(self):
         """

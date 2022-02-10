@@ -160,27 +160,3 @@ class CommandDevice(object):
                 raise CMDeviceReplyTimeout(self.cmdHdl.cmd_header, request_command, elapsed)
 
         setattr(self, get_function_name, get)
-
-    def register_clb(self, answer_command, variable_name, callback_function_for_variable_update,  variable_init_value=None):
-        setattr(self, variable_name, variable_init_value)
-        lock_variable_name = variable_name + "_lock"
-        setattr(self, lock_variable_name, Lock())
-
-        self.cmdHdl.add_command(answer_command, callback_function_for_variable_update)
-
-        get_function_name = 'get_' + variable_name
-        def get():
-            variable_lock = getattr(self, lock_variable_name)
-            variable_lock.acquire()
-            var = getattr(self, variable_name)
-            variable_lock.ensure_released()
-            return var
-        setattr(self, get_function_name, get)
-
-        set_function_name = 'set_' + variable_name
-        def set(value):
-            variable_lock = getattr(self, lock_variable_name)
-            variable_lock.acquire()
-            setattr(self, variable_name, value)
-            variable_lock.ensure_released()
-        setattr(self, set_function_name, set)

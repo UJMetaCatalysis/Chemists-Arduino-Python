@@ -63,7 +63,7 @@ class CommandManager(object):
     def __init__(self, command_configs: List[Dict], devices_dict: Dict, init_timeout: float = DEFAULT_INIT_TIMEOUT,
                  init_n_repeats: int = DEFAULT_INIT_N_REPEATS, simulation: bool = False):
         self.logger = logging.getLogger(__name__).getChild(self.__class__.__name__)
-        self.logger.setLevel(logging.WARNING)
+        self.logger.setLevel('DEBUG')
 
         self._simulation = simulation
 

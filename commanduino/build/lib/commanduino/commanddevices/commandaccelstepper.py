@@ -42,7 +42,6 @@ COMMANDACCELSTEPPER_REQUEST_ACCELERATION = "RIA"
 
 
 # Outgoing Commands
-COMMANDACCELSTEPPER_MOVE_COMPLETE = "MC"
 COMMANDACCELSTEPPER_MOVING = "M"
 COMMANDACCELSTEPPER_DIST = "D"
 COMMANDACCELSTEPPER_TARGET = "T"
@@ -84,16 +83,14 @@ class CommandAccelStepper(CommandDevice):
         CommandDevice
 
     """
-    def __init__(self, speed=DEFAULT_SPEED, max_speed=DEFAULT_MAX_SPEED, acceleration=DEFAULT_ACCELERATION, enabled_acceleration=True, reverted_direction=False, steps_per_rev=3200):
+    def __init__(self, speed=DEFAULT_SPEED, max_speed=DEFAULT_MAX_SPEED, acceleration=DEFAULT_ACCELERATION, enabled_acceleration=True, reverted_direction=False):
         CommandDevice.__init__(self)
         self.register_all_requests()
-        self.register_all_callbacks()
         self.init_speed = speed
         self.init_max_speed = max_speed
         self.init_acceleration = acceleration
         self.enabled_acceleration = enabled_acceleration
         self.reverted_direction = reverted_direction
-        self.steps_per_rev = steps_per_rev
 
     def init(self):
         self.set_all_params()
@@ -235,7 +232,6 @@ class CommandAccelStepper(CommandDevice):
         running_speed = self.apply_reverted_direction(self.running_speed)
         self._set_speed(running_speed)
         steps = self.apply_reverted_direction(steps)
-        self.set_move_complete(False)
         self.send(COMMANDACCELSTEPPER_MOVE_TO, steps)
         if wait:
             self.wait_until_idle()
@@ -253,7 +249,6 @@ class CommandAccelStepper(CommandDevice):
         running_speed = self.apply_reverted_direction(self.running_speed)
         self._set_speed(running_speed)
         steps = self.apply_reverted_direction(steps)
-        self.set_move_complete(False)
         self.send(COMMANDACCELSTEPPER_MOVE, steps)
         if wait:
             self.wait_until_idle()
@@ -399,19 +394,6 @@ class CommandAccelStepper(CommandDevice):
         if arg[0]:
             self.acceleration = float(arg[0])
             self.acceleration_lock.ensure_released()
-
-    def register_all_callbacks(self):
-        self.register_clb(COMMANDACCELSTEPPER_MOVE_COMPLETE,
-            "move_complete",
-            self.handle_move_complete,
-            False)
-        setattr(self, 'magnets_passed', 0)
-
-    def handle_move_complete(self, *arg):
-        self.move_complete_lock.acquire()
-        self.move_complete = True
-        self.move_complete_lock.ensure_released()
-        self.magnets_passed = int(arg[0])
 
     def print_info(self):
         """

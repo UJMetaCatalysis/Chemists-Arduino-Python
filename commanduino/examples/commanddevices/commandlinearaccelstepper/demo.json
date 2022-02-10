@@ -1,5 +1,8 @@
 {
   "ios" : [
+  {
+	  "port":"COM6"
+  },
     {
       "port": "/dev/tty.usbmodem1411"
     },

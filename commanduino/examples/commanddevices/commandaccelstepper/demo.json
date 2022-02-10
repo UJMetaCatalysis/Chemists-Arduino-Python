@@ -1,7 +1,7 @@
 {
   "ios" : [
     {
-      "port": "/dev/tty.usbmodem1411"
+      "port": "COM7"
     },
     {
       "port": "/dev/ttyACM0"
@@ -15,7 +15,7 @@
   ],
   "devices": {
     "stepper": {
-      "command_id": "CSTP1",
+      "command_id": "STPX",
       "config": {
         "enabled_acceleration": false,
         "speed": 1000,
